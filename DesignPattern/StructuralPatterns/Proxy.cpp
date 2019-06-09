@@ -1,27 +1,38 @@
-class Subject
-{
+#include <iostream>
+#define PRINT_FUNCTION std::cout << __FUNCTION__ << std::endl
+
+class Subject {
 public:
     virtual void Request() = 0;
 };
 
-class RealSubject
-{
+class RealSubject : public Subject {
 public:
-    void Request();
+    RealSubject() { PRINT_FUNCTION; }
+    void Request() final { PRINT_FUNCTION; }
 };
 
-class Proxy: public Subject
-{
+class Proxy : public Subject {
 public:
-    Proxy(RealSubject& realSubject): m_realSubject(&realSubject) {}
-    virtual void Request() { m_realSubject->Request();}
+    Proxy(RealSubject* realSubject = nullptr)
+        : m_realSubject(realSubject) {
+        PRINT_FUNCTION;
+    }
+    void Request() final {
+        PRINT_FUNCTION;
+        if (m_realSubject == nullptr) m_realSubject = new RealSubject();
+        m_realSubject->Request();
+    }
 private:
     RealSubject* m_realSubject;
 };
 
-void Client()
-{
-    RealSubject* realSubject = new RealSubject;
-    Subject* subject = new Proxy(*realSubject);
+void Client() {
+    Subject* subject = new Proxy();
     subject->Request();
+}
+
+int main() {
+    Client();
+    return 0;
 }

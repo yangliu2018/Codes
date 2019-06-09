@@ -1,6 +1,14 @@
+#include <iostream>
+#include <vector>
+
+#define PRINT_MESSAGE(msg)  std::cout << (msg) << std::endl
+#define PRINT_FUNCTION()    PRINT_MESSAGE(__FUNCTION__)
+#define PRINT_LINE()        PRINT_MESSAGE("")
+
+
 class Element;
-class ConcreteElementA : public Element;
-class ConcreteElementB : public Element;
+class ConcreteElementA;
+class ConcreteElementB;
 
 class Visitor
 {
@@ -9,44 +17,80 @@ public:
     virtual void VisitConcreteElementB(ConcreteElementB* elementB) = 0;
 };
 
-class Element()
+class Element
 {
 public:
     virtual void Accept(Visitor* visitor) = 0;
 };
 
-class ObjectStructure
-{
-private:
-    Element* m_elementX;
-    Element* m_elementY;
-    //...
-};
-
-class ConcreteVisit1 : public Visitor
+class ConcreteVisitor1 : public Visitor
 {
 public:
-    virtual void VisitConcreteElementA(ConcreteElementA* elementA);
-    virtual void VisitConcreteElementB(ConcreteElementB* elementB);
+    virtual void VisitConcreteElementA(ConcreteElementA* elementA) override {
+        PRINT_FUNCTION();
+    }
+    virtual void VisitConcreteElementB(ConcreteElementB* elementB) override {
+        PRINT_FUNCTION();
+    }
 };
 
-class ConcreteVisit2 : public Visitor
+class ConcreteVisitor2 : public Visitor
 {
 public:
-    virtual void VisitConcreteElementA(ConcreteElementA* elementA);
-    virtual void VisitConcreteElementB(ConcreteElementB* elementB);
+    virtual void VisitConcreteElementA(ConcreteElementA* elementA) override {
+        PRINT_FUNCTION();
+    }
+    virtual void VisitConcreteElementB(ConcreteElementB* elementB) override {
+        PRINT_FUNCTION();
+    }
 };
 
-class ConcreteElementA()
+class ConcreteElementA : public Element
 {
 public:
-    virtual void Accept(Visitor* v) { v->VisitConcreteElemeteA(this); }
+    virtual void Accept(Visitor* v) override {
+        PRINT_FUNCTION();
+        v->VisitConcreteElementA(this); 
+    }
     void OperationA();
 };
 
-class ConcreteElementB()
+class ConcreteElementB : public Element
 {
 public:
-    virtual void Accept(Visitor* v) { v->VisitConcreteElemeteB(this); }
+    virtual void Accept(Visitor* v) override {
+        PRINT_FUNCTION();
+        v->VisitConcreteElementB(this);
+    }
     void OperationB();
 };
+
+class ObjectStructure
+{
+public:
+    void AddElement(Element* element) {
+        m_elements.push_back(element);
+    }
+    void Accept(Visitor* visitor) {
+        for (Element* element : m_elements) {
+            element->Accept(visitor);
+        }
+    }
+private:
+    std::vector<Element*> m_elements;
+};
+
+void Client() {
+    ObjectStructure container;
+    container.AddElement(new ConcreteElementA());
+    container.AddElement(new ConcreteElementB());
+    container.AddElement(new ConcreteElementA());
+    container.Accept(new ConcreteVisitor1());
+    PRINT_LINE();
+    container.Accept(new ConcreteVisitor2());
+}
+
+int main() {
+    Client();
+    return 0;
+}

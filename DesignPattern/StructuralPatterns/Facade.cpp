@@ -1,6 +1,5 @@
-#pragma once 
-
 #include <iostream>
+
 #define PRINT_FUNCTION std::cout << __FUNCTION__ << std::endl;
 
 class SubsystemA {
