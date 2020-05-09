@@ -3,15 +3,18 @@
 
 // the state of vertices
 enum class State {
-    UNDISCOVERED,
-    DISCOVERING,
-    DISCOVERED,
+    WHITE,  // UNDISCOVERED
+    GRAY,   // DISCOVERING, the frontier
+    BLACK,  // DISCOVERED
 };
 
 struct Vertex {
     State state;
+    int distance;
+    Vertex* predecessor;
     Vertex() {
-        state = State::UNDISCOVERED;
+        state = State::WHITE;
+        distance = 0;
     }
 }
 
